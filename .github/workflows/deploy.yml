@@ -1,0 +1,47 @@
+name: Deploy CloudFormation
+
+on:
+
+  push:
+
+    branches:
+
+      - main
+
+jobs:
+
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploy VPC
+        run: |
+          aws cloudformation deploy \
+            --template-file templates/01-vpc.yml \
+            --stack-name project-vpc \
+            --capabilities CAPABILITY_NAMED_IAM
+
+      - name: Deploy EC2 ASG LB
+        run: |
+          aws cloudformation deploy \
+            --template-file templates/02-ec2-asg-lb.yml \
+            --stack-name project-compute \
+            --capabilities CAPABILITY_NAMED_IAM
+
+      - name: Deploy CloudWatch
+        run: |
+          aws cloudformation deploy \
+            --template-file templates/03-cloudwatch.yml \
+            --stack-name project-monitoring \
+            --parameter-overrides AutoScalingGroupName=AutoScalingGroup \
+            --capabilities CAPABILITY_NAMED_IAM

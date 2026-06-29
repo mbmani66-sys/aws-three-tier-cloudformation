@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudWatch Alarm
+
+Parameters:
+
+  AutoScalingGroupName:
+
+    Type: String
+
+Resources:
+
+  CPUAlarm:
+
+    Type: AWS::CloudWatch::Alarm
+
+    Properties:
+
+      AlarmDescription: High CPU
+
+      Namespace: AWS/EC2
+
+      MetricName: CPUUtilization
+
+      Statistic: Average
+
+      Period: 300
+
+      EvaluationPeriods: 2
+
+      Threshold: 70
+
+      ComparisonOperator: GreaterThanThreshold
+
+      Dimensions:
+
+        - Name: AutoScalingGroupName
+
+          Value: !Ref AutoScalingGroupName
