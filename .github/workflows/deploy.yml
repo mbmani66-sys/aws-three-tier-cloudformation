@@ -1,46 +1,42 @@
 name: Deploy CloudFormation
 
 on:
-
   push:
-
     branches:
-
       - main
 
 jobs:
-
   deploy:
-
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: actions/checkout@v4
-
-      - uses: aws-actions/configure-aws-credentials@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
       - name: Deploy VPC
-  run: |
-    aws cloudformation deploy \
-      --template-file templates/vpc.yaml \
-      --stack-name project-vpc \
-      --capabilities CAPABILITY_NAMED_IAM
+        run: |
+          aws cloudformation deploy \
+            --template-file templates/vpc.yaml \
+            --stack-name project-vpc \
+            --capabilities CAPABILITY_NAMED_IAM
 
-- name: Deploy Compute
-  run: |
-    aws cloudformation deploy \
-      --template-file templates/compute.yaml \
-      --stack-name project-compute \
-      --capabilities CAPABILITY_NAMED_IAM
+      - name: Deploy Compute
+        run: |
+          aws cloudformation deploy \
+            --template-file templates/compute.yaml \
+            --stack-name project-compute \
+            --capabilities CAPABILITY_NAMED_IAM
 
-- name: Deploy Monitoring
-  run: |
-    aws cloudformation deploy \
-      --template-file templates/monitoring.yaml \
-      --stack-name project-monitoring \
-      --capabilities CAPABILITY_NAMED_IAM
+      - name: Deploy Monitoring
+        run: |
+          aws cloudformation deploy \
+            --template-file templates/monitoring.yaml \
+            --stack-name project-monitoring \
+            --capabilities CAPABILITY_NAMED_IAM
