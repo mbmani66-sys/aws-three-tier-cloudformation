@@ -25,23 +25,22 @@ jobs:
           aws-region: us-east-1
 
       - name: Deploy VPC
-        run: |
-          aws cloudformation deploy \
-            --template-file templates/01-vpc.yml \
-            --stack-name project-vpc \
-            --capabilities CAPABILITY_NAMED_IAM
+  run: |
+    aws cloudformation deploy \
+      --template-file templates/vpc.yaml \
+      --stack-name project-vpc \
+      --capabilities CAPABILITY_NAMED_IAM
 
-      - name: Deploy EC2 ASG LB
-        run: |
-          aws cloudformation deploy \
-            --template-file templates/02-ec2-asg-lb.yml \
-            --stack-name project-compute \
-            --capabilities CAPABILITY_NAMED_IAM
+- name: Deploy Compute
+  run: |
+    aws cloudformation deploy \
+      --template-file templates/compute.yaml \
+      --stack-name project-compute \
+      --capabilities CAPABILITY_NAMED_IAM
 
-      - name: Deploy CloudWatch
-        run: |
-          aws cloudformation deploy \
-            --template-file templates/03-cloudwatch.yml \
-            --stack-name project-monitoring \
-            --parameter-overrides AutoScalingGroupName=AutoScalingGroup \
-            --capabilities CAPABILITY_NAMED_IAM
+- name: Deploy Monitoring
+  run: |
+    aws cloudformation deploy \
+      --template-file templates/monitoring.yaml \
+      --stack-name project-monitoring \
+      --capabilities CAPABILITY_NAMED_IAM
